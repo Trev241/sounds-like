@@ -1,49 +1,36 @@
+import re
 import h5py
 
-from pathlib import Path
 
-
-def extract_file(file):
+def h5_to_dict(file):
     """Returns the data stored in a HDF5 file as a dictionary"""
+    data = {}
 
-    with h5py.File(Path(file), "r") as f:
-        song_data = {
-            "artist_mbid": f["metadata/songs"]["artist_mbid"][0].decode("utf-8"),
-            "artist_mbtags": [
-                tag.decode("utf-8") for tag in f["musicbrainz/artist_mbtags"]
-            ],
-            "artist_mbtags_count": list(f["musicbrainz/artist_mbtags_count"]),
-            "artist_name": f["metadata/songs"]["artist_name"][0].decode("utf-8"),
-            "artist_playmeid": int(f["metadata/songs"]["artist_playmeid"][0]),
-            "artist_terms": [
-                term.decode("utf-8") for term in f["metadata/artist_terms"]
-            ],
-            "artist_terms_freq": list(f["metadata/artist_terms_freq"]),
-            "artist_terms_weight": list(f["metadata/artist_terms_weight"]),
-            "audio_md5": f["analysis/songs"]["audio_md5"][0].decode("utf-8"),
-            "danceability": float(f["analysis/songs"]["danceability"][0]),
-            "duration": float(f["analysis/songs"]["duration"][0]),
-            "end_of_fade_in": float(f["analysis/songs"]["end_of_fade_in"][0]),
-            "energy": float(f["analysis/songs"]["energy"][0]),
-            "key": int(f["analysis/songs"]["key"][0]),
-            "key_confidence": float(f["analysis/songs"]["key_confidence"][0]),
-            "loudness": float(f["analysis/songs"]["loudness"][0]),
-            "mode": int(f["analysis/songs"]["mode"][0]),
-            "mode_confidence": float(f["analysis/songs"]["mode_confidence"][0]),
-            "release": f["metadata/songs"]["release"][0].decode("utf-8"),
-            "release_7digitalid": int(f["metadata/songs"]["release_7digitalid"][0]),
-            "song_hotttnesss": float(f["metadata/songs"]["song_hotttnesss"][0]),
-            "song_id": f["metadata/songs"]["song_id"][0].decode("utf-8"),
-            "start_of_fade_out": float(f["analysis/songs"]["start_of_fade_out"][0]),
-            "tempo": float(f["analysis/songs"]["tempo"][0]),
-            "time_signature": int(f["analysis/songs"]["time_signature"][0]),
-            "time_signature_confidence": float(
-                f["analysis/songs"]["time_signature_confidence"][0]
-            ),
-            "title": f["metadata/songs"]["title"][0].decode("utf-8"),
-            "track_7digitalid": int(f["metadata/songs"]["track_7digitalid"][0]),
-            "track_id": f["analysis/songs"]["track_id"][0].decode("utf-8"),
-            "year": int(f["musicbrainz/songs"]["year"][0]),
-        }
+    def populate(name, obj):
+        if isinstance(obj, h5py.Group):
+            # Ignore groups
+            return
 
-    return song_data
+        if obj.attrs["CLASS"] == b"TABLE":
+            # Object is a table
+            values = obj[:]
+            for k, v in obj.attrs.items():
+                # We can use the index in the field name to access the correct value in the array
+                match = re.match(r"FIELD_(\d+)_NAME", k)
+                if match:
+                    idx = int(match.group(1))
+                    val = values[0][idx]
+                    try:
+                        # Attempt to convert to string
+                        val = val.decode("utf-8")
+                    except:
+                        pass
+                    data[f"{name}/{v.decode("utf-8")}"] = val
+        else:
+            # Object is a basic array
+            data[name] = obj[:]
+
+    with h5py.File(file, "r") as f:
+        f.visititems(populate)
+
+    return data
