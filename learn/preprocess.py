@@ -42,12 +42,6 @@ df = pd.concat([df, df_encoded_keys, df_encoded_mode], axis=1)
 # Apply the StandardScaler to normalize datapoints in the tempo column using Z-score distribution
 scaler = StandardScaler()
 
-df["analysis/songs/tempo"] = scaler.fit_transform(
-    np.reshape(df["analysis/songs/tempo"], (-1, 1))
-)
-df["analysis/songs/loudness"] = scaler.fit_transform(
-    np.reshape(df["analysis/songs/loudness"], (-1, 1))
-)
-df["analysis/songs/duration"] = scaler.fit_transform(
-    np.reshape(df["analysis/songs/duration"], (-1, 1))
-)
+df["analysis/songs/tempo"] = scaler.fit_transform(df[["analysis/songs/tempo"]])
+df["analysis/songs/loudness"] = scaler.fit_transform(df[["analysis/songs/loudness"]])
+df["analysis/songs/duration"] = scaler.fit_transform(df[["analysis/songs/duration"]])
