@@ -173,6 +173,4 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-data/MillionSongSubset/*
-data/tracks.csv
-data/extracted_folder
+data/
