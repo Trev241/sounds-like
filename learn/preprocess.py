@@ -13,7 +13,6 @@ try:
 except:
     # Convert HDF5 files into a pandas dataframe.
     rows = []
-    h5_to_dict("data/TRAXLZU12903D05F94.h5")
 
     for root, _, files in os.walk(INPUT_FILE_PATH):
         for file in files:
