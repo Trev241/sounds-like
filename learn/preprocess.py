@@ -13,7 +13,6 @@ try:
 except:
     # Convert HDF5 files into a pandas dataframe.
     rows = []
-    h5_to_dict("data/TRAXLZU12903D05F94.h5")
 
     for root, _, files in os.walk(INPUT_FILE_PATH):
         for file in files:
@@ -28,6 +27,20 @@ except:
     df.to_csv(OUTPUT_CSV_PATH, index=False)
 
 print(f"CSV created: {OUTPUT_CSV_PATH}")
+
+# Reshape Taste Profile subset
+df = pd.read_csv(
+    "data/train_triplets.txt",
+    delimiter="\t",
+    names=["user_id", "song_id", "play_count"],
+)
+df = df.sort_values(by=["user_id", "play_count"], ascending=[True, False])
+
+top_songs = df.groupby("user_id").head(5)
+result = top_songs.groupby("user_id")["song_id"].apply(list).reset_index()
+result.columns = ["User", "Top 5 Tracks"]
+
+result.to_csv("data/taste_profile.csv")
 
 # Create one-hot encoding vectors
 encoder = OneHotEncoder(sparse_output=False)
