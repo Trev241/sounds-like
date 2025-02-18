@@ -29,6 +29,20 @@ except:
 
 print(f"CSV created: {OUTPUT_CSV_PATH}")
 
+# Reshape Taste Profile subset
+df = pd.read_csv(
+    "data/train_triplets.txt",
+    delimiter="\t",
+    names=["user_id", "song_id", "play_count"],
+)
+df = df.sort_values(by=["user_id", "play_count"], ascending=[True, False])
+
+top_songs = df.groupby("user_id").head(5)
+result = top_songs.groupby("user_id")["song_id"].apply(list).reset_index()
+result.columns = ["User", "Top 5 Tracks"]
+
+result.to_csv("data/taste_profile.csv")
+
 # Create one-hot encoding vectors
 encoder = OneHotEncoder(sparse_output=False)
 encoder.set_output(transform="pandas")
