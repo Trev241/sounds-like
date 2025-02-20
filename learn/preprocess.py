@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import math
 
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from utils.converter import h5_to_dict
@@ -36,11 +37,32 @@ temp_df = pd.read_csv(
 )
 temp_df = temp_df.sort_values(by=["user_id", "play_count"], ascending=[True, False])
 
-top_songs = temp_df.groupby("user_id").head(5)
-result = top_songs.groupby("user_id")["song_id"].apply(list).reset_index()
-result.columns = ["User", "Top 5 Tracks"]
+# Only use a subset of the data
+temp_df = temp_df.head(math.floor(len(temp_df.index) * 0.01))
+temp_df.head()
 
-result.to_csv("data/taste_profile.csv")
+# Assign an index to every unique song in the list
+codes, unique = pd.factorize(temp_df["song_id"])
+temp_df["song_id_coded"] = pd.to_numeric(codes)
+
+# Get some useful stats
+num_songs = len(unique)
+num_users = len(temp_df["user_id"].value_counts().keys())
+
+# Find top 5 songs
+top_songs = temp_df.groupby("user_id").head(5)
+taste_profile_df = (
+    top_songs.groupby("user_id")["song_id_coded"].apply(list).reset_index()
+)
+taste_profile_df.columns = ["user", "top_5_song_id_coded"]
+taste_profile_df[[f"track_{i}_coded" for i in range(1, 6)]] = pd.DataFrame(
+    taste_profile_df[f"top_5_song_id_coded"].to_list(), index=taste_profile_df.index
+)
+
+print(f"There are {num_songs} songs and {num_users} users in our selection.")
+
+taste_profile_df.to_csv("data/taste_profile.csv", index=False)
+taste_profile_df.head(10)
 
 # Create one-hot encoding vectors
 encoder = OneHotEncoder(sparse_output=False)
