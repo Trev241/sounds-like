@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 from torch import nn, optim
 from random import randint
-from models.models import model
+from models.models import RecommendationModel
 from preprocess import taste_profile_df, track_cols, num_songs, num_users
 
 # Creating target tensors for training the model
@@ -61,6 +61,8 @@ print(f"Using {device} device")
 
 input_len = 4  # The number of favourite songs considered as input for each user
 embedding_dim = 3
+
+model = RecommendationModel(num_songs, embedding_dim)
 
 loss_fn = nn.BCEWithLogitsLoss()
 lr = 0.001
