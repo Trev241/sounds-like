@@ -50,13 +50,17 @@ num_songs = len(unique)
 num_users = len(temp_df["user_id"].value_counts().keys())
 
 # Find top 5 songs
-top_songs = temp_df.groupby("user_id").head(5)
+limit = 5
+
+track_cols = [f"track_{i}_coded" for i in range(1, limit + 1)]
+top_songs = temp_df.groupby("user_id").head(limit)
 taste_profile_df = (
     top_songs.groupby("user_id")["song_id_coded"].apply(list).reset_index()
 )
-taste_profile_df.columns = ["user", "top_5_song_id_coded"]
-taste_profile_df[[f"track_{i}_coded" for i in range(1, 6)]] = pd.DataFrame(
-    taste_profile_df[f"top_5_song_id_coded"].to_list(), index=taste_profile_df.index
+taste_profile_df.columns = ["user", f"top_{limit}_song_id_coded"]
+taste_profile_df[[f"track_{i}_coded" for i in range(1, limit + 1)]] = pd.DataFrame(
+    taste_profile_df[f"top_{limit}_song_id_coded"].to_list(),
+    index=taste_profile_df.index,
 )
 
 print(f"There are {num_songs} songs and {num_users} users in our selection.")
