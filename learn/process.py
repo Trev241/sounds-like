@@ -1,11 +1,14 @@
 import torch
 import matplotlib.pyplot as plt
 import torch.nn.functional as F
+import threading
+import queue
 
 from torch import nn, optim
 from random import randint
 from models.models import RecommendationModel
 from preprocess import taste_profile_df, track_cols, num_songs, num_users
+from matplotlib.animation import FuncAnimation
 
 # Creating target tensors for training the model
 # Single-label targets where we try to predict the last track in the user's list of top n tracks
@@ -68,20 +71,57 @@ loss_fn = nn.BCEWithLogitsLoss()
 lr = 0.001
 optimizer = optim.Adam(model.parameters(), lr=lr)
 
-n_epochs = 2000
+n_epochs = 100
 batch_size = 10
-loss_vals = []
 
-for epoch in range(n_epochs):
-    for i in range(0, len(model_input), batch_size):
-        batch = model_input[i : i + batch_size]
-        y_pred = model(batch)
-        y_batch = target_m[i : i + batch_size]
-        # print(f"Input:\n{batch}\nPrediction:\n{y_pred}\nTarget:\n{y_batch}\n")
-        loss = loss_fn(y_pred, y_batch)
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-    loss_vals.append(loss.item())
+fig, ax = plt.subplots()
+x_data, y_data = [], []
+(line,) = ax.plot([], [], "r-", lw=2)
+loss_start = -1
+loss_queue = queue.Queue()
 
-plt.plot([e + 1 for e in range(n_epochs)], loss_vals)
+ax.set_xlim(0, 1)
+ax.set_ylim(0, 1)
+ax.set_xlabel("Epochs")
+ax.set_ylabel("Loss")
+
+
+def update(frame):
+    while not loss_queue.empty():
+        loss = loss_queue.get()
+
+        x_data.append(len(y_data))
+        y_data.append(loss)
+        line.set_data(x_data, y_data)
+
+        # Adjust x-limits dynamically
+        ax.set_xlim(0, x_data[-1] + 1)
+        ax.set_ylim(0, max(y_data[-1], loss_start))
+
+    return (line,)
+
+
+def train():
+    global loss_start
+    global loss_queue
+
+    for _ in range(n_epochs):
+        for i in range(0, len(model_input), batch_size):
+            batch = model_input[i : i + batch_size]
+            y_pred = model(batch)
+            y_batch = target_m[i : i + batch_size]
+            loss = loss_fn(y_pred, y_batch)
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+
+        loss_queue.put(loss.item())
+        if loss_start == -1:
+            loss_start = loss.item()
+
+
+train_thread = threading.Thread(target=train, daemon=True)
+train_thread.start()
+
+ani = FuncAnimation(fig, update, frames=range(n_epochs), interval=100, blit=True)
+plt.show()

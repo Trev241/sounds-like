@@ -2,3 +2,4 @@ h5py==3.12.1
 pandas==2.2.3
 Requests==2.32.3
 scikit_learn==1.6.1
+ipympl==0.9.6

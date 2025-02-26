@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 import math
+import sqlite3
 
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from utils.converter import h5_to_dict
@@ -28,6 +29,9 @@ except:
     df.to_csv(OUTPUT_CSV_PATH, index=False)
 
 print(f"CSV created: {OUTPUT_CSV_PATH}")
+
+db = sqlite3.connect("data/track_metadata.db")
+song_metadata = pd.read_sql_query("SELECT * from songs", db)
 
 # Reshape Taste Profile subset
 temp_df = pd.read_csv(
