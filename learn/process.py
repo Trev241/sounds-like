@@ -125,3 +125,5 @@ train_thread.start()
 
 ani = FuncAnimation(fig, update, frames=range(n_epochs), interval=100, blit=True)
 plt.show()
+
+torch.save("data/recommender.pt")
