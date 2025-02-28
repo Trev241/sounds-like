@@ -5,7 +5,7 @@ document.querySelector("#app").innerHTML = `
   <div>
 
     <p class="read-the-docs">
-     hello
+     hello world
     </p>
   </div>
 `;
