@@ -174,3 +174,8 @@ cython_debug/
 .pypirc
 
 data/
+
+
+viewer/node_modules/
+viewer/package.json
+viewer/package-lock.json
