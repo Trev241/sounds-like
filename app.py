@@ -3,7 +3,6 @@ import sqlite3
 
 from learn.models import RecommendationModel
 from fastapi import Request, FastAPI, HTTPException
-from random import choices
 
 app = FastAPI()
 
