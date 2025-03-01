@@ -1,5 +1,7 @@
+fastapi==0.115.10
 h5py==3.12.1
+matplotlib==3.8.2
 pandas==2.2.3
 Requests==2.32.3
 scikit_learn==1.6.1
-ipympl==0.9.6
+torch==2.6.0

@@ -1,14 +1,13 @@
 import torch
 import matplotlib.pyplot as plt
 import torch.nn.functional as F
-import threading
 import queue
 
 from torch import nn, optim
 from random import randint
-from models.models import RecommendationModel
+from learn.models import RecommendationModel
 from preprocess import taste_profile_df, track_cols, num_songs, num_users
-from matplotlib.animation import FuncAnimation
+from IPython.display import display, clear_output
 
 # Creating target tensors for training the model
 # Single-label targets where we try to predict the last track in the user's list of top n tracks
@@ -67,63 +66,71 @@ embedding_dim = 3
 
 model = RecommendationModel(num_songs, embedding_dim)
 
-loss_fn = nn.BCEWithLogitsLoss()
+# loss_fn = nn.BCEWithLogitsLoss()
+loss_fn = nn.BCEWithLogitsLoss(reduction="none")
 lr = 0.001
 optimizer = optim.Adam(model.parameters(), lr=lr)
 
-n_epochs = 100
+n_epochs = 500
 batch_size = 10
 
 fig, ax = plt.subplots()
 x_data, y_data = [], []
-(line,) = ax.plot([], [], "r-", lw=2)
-loss_start = -1
+(line,) = ax.plot(x_data, y_data, "r-", lw=2)
+loss_upper = 0
+loss_lower = 1
 loss_queue = queue.Queue()
 
 ax.set_xlim(0, 1)
 ax.set_ylim(0, 1)
 ax.set_xlabel("Epochs")
 ax.set_ylabel("Loss")
+ax.set_title("Loss Curve")
+ax.xaxis.get_major_locator().set_params(integer=True)
 
+# Create weights
+weights = torch.ones(num_users, num_songs)
+weights.scatter_(1, tracks[:, -1].unsqueeze(1), 2.0)
 
-def update(frame):
-    while not loss_queue.empty():
-        loss = loss_queue.get()
+for epoch in range(n_epochs):
+    for i in range(0, len(model_input), batch_size):
+        batch = model_input[i : i + batch_size]
+        y_pred = model(batch)
+        y_batch = target_m[i : i + batch_size]
+        weights_batch = weights[i : i + batch_size]
 
-        x_data.append(len(y_data))
-        y_data.append(loss)
-        line.set_data(x_data, y_data)
+        # loss = loss_fn(y_pred, y_batch)
+        loss_per_element = loss_fn(y_pred, y_batch)
+        weighted_loss = loss_per_element * weights_batch
+        loss = weighted_loss.mean()
 
-        # Adjust x-limits dynamically
-        ax.set_xlim(0, x_data[-1] + 1)
-        ax.set_ylim(0, max(y_data[-1], loss_start))
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
 
-    return (line,)
+    # Update plot
+    loss_val = loss.item()
+    x_data.append(epoch)
+    y_data.append(loss_val)
+    line.set_data(x_data, y_data)
 
+    loss_lower = min(loss_lower, loss_val)
+    loss_upper = max(loss_upper, loss_val)
+    loss_range = loss_upper - loss_lower
+    ax.set_xlim(0, x_data[-1] + 1)
+    if loss_lower != loss_upper:
+        ax.set_ylim(
+            max(0, loss_lower - loss_range * 0.1), min(1, loss_upper + loss_range * 0.1)
+        )
+    else:
+        ax.set_ylim(0, 1)
 
-def train():
-    global loss_start
-    global loss_queue
+    clear_output(wait=True)
+    display(fig)
 
-    for _ in range(n_epochs):
-        for i in range(0, len(model_input), batch_size):
-            batch = model_input[i : i + batch_size]
-            y_pred = model(batch)
-            y_batch = target_m[i : i + batch_size]
-            loss = loss_fn(y_pred, y_batch)
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+print("Done.")
 
-        loss_queue.put(loss.item())
-        if loss_start == -1:
-            loss_start = loss.item()
-
-
-train_thread = threading.Thread(target=train, daemon=True)
-train_thread.start()
-
-ani = FuncAnimation(fig, update, frames=range(n_epochs), interval=100, blit=True)
-plt.show()
-
-torch.save("data/recommender.pt")
+torch.save(model.state_dict(), "data/recommender.pt")
+print(
+    f"Model saved. (Number of songs: {num_songs}, Embedding Dimensions: {embedding_dim})"
+)
