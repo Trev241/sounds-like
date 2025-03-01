@@ -62,13 +62,15 @@ taste_profile_df = (
     top_songs.groupby("user_id")["song_id_coded"].apply(list).reset_index()
 )
 taste_profile_df.columns = ["user", f"top_{limit}_song_id_coded"]
-taste_profile_df[[f"track_{i}_coded" for i in range(1, limit + 1)]] = pd.DataFrame(
+taste_profile_df[track_cols] = pd.DataFrame(
     taste_profile_df[f"top_{limit}_song_id_coded"].to_list(),
     index=taste_profile_df.index,
 )
 
 print(f"There are {num_songs} songs and {num_users} users in our selection.")
 
+# Save data for later use
+unique.to_frame(index=False, name="song_id").to_sql(name="song_codes", con=db)
 taste_profile_df.to_csv("data/taste_profile.csv", index=False)
 taste_profile_df.head(10)
 
