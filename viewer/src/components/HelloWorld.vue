@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import gsap from "gsap"
 
 defineProps({
   msg: String,
