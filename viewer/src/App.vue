@@ -1,15 +1,47 @@
-<script setup>
-import HelloWorld from './components/HelloWorld.vue'
+<script>
+import NavBar from './components/NavBar.vue';
+
+export default {
+  components: {
+    NavBar,
+  },
+};
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+  <div class="wrapper">
+    <NavBar/>
+    <router-view/>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
+
+<style>
+.wrapper {
+  background: #f3f1f5;
+  min-height: 100vh;
+  font-family: 'Roboto', sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-repeat: repeat;
+  animation: movePattern 30s linear infinite;
+  z-index: -1;
+}
+
+@keyframes movePattern {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(100px, 100px);
+  }
+}
+</style>
