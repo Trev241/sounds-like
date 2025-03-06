@@ -1,7 +1,10 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/all";
 import.meta.glob("/public/sounds/*.ogg");
+
+gsap.registerPlugin(ScrollTrigger);
 
 const titleText = "Find that perfect song";
 const title = ref(titleText.split(""));
@@ -24,6 +27,15 @@ const picks = ref(
   }))
 );
 
+const verdicts = ref([
+  { src: "/images/cropped-rec-song-1.jpg", title: "MONEY", artist: "Lisa" },
+  {
+    src: "/images/cropped-rec-song-2.jpg",
+    title: "Renai Circulation",
+    artist: "Kana Hanazawa",
+  },
+]);
+
 onMounted(() => {
   gsap.to(".title-char", {
     y: -40,
@@ -37,7 +49,11 @@ onMounted(() => {
     },
   });
 
-  let songTimeline = gsap.timeline({ repeat: -1 });
+  let songTimeline = gsap.timeline({
+    repeat: -1,
+    paused: true,
+    scrollTrigger: { trigger: "#pick-container", markers: true },
+  });
   songTimeline.fromTo(
     ".song",
     {
@@ -49,7 +65,6 @@ onMounted(() => {
     {
       opacity: 1,
       stagger: 0.1,
-      delay: 1,
       x: 0,
       // y: 0,
       ease: "power4.out",
@@ -71,26 +86,23 @@ onMounted(() => {
   songTimeline.add(() => {}, "+=5");
   songTimeline.to(".verdict", { opacity: 0 });
   songTimeline.to(".song", { x: "-500%", stagger: 0.1 }, "+=2");
+  songTimeline.add(() => {}, "+=2");
 
-  let recTimeline = gsap.timeline({ repeat: -1, yoyo: true });
-  recTimeline.add(() => {}, "+=3");
-  recTimeline.to("#rec-song", { x: "400%", duration: 3, ease: "power4.inOut" });
-  recTimeline.fromTo(
-    "#rec-text-left",
-    { width: 0 },
-    { width: "100%", duration: 3, ease: "power4.inOut" },
-    "-=100%"
-  );
-  recTimeline.fromTo(
-    "#rec-text-right",
-    { width: "80%" },
-    {
-      width: 0,
-      duration: 3,
-      ease: "power4.inOut",
+  let recTimeline = gsap.timeline({
+    repeat: -1,
+    ease: "power4.out",
+    scrollTrigger: {
+      trigger: "#rec-container",
+      start: "top bottom",
+      markers: true,
     },
-    "-=100%"
-  );
+  });
+  recTimeline.set(".rec-text", { width: 0 });
+  recTimeline.to(".rec-text", {
+    width: "100%",
+    duration: 2,
+    stagger: { amount: 6, repeat: 1, yoyo: true },
+  });
   recTimeline.add(() => {}, "+=3");
 });
 
@@ -226,7 +238,7 @@ const onCharEnter = (event) => {
       </div> -->
 
       <div
-        class="flex flex-col h-screen max-w-screen-xl mx-auto py-24 overflow-x-hidden"
+        class="flex flex-col min-h-screen max-w-screen-xl mx-auto py-24 overflow-x-hidden"
       >
         <div class="">
           <div class="w-1/2">
@@ -236,7 +248,7 @@ const onCharEnter = (event) => {
               best thing to listen to. Why just 4? No idea.
             </p>
           </div>
-          <div class="flex justify-evenly">
+          <div id="pick-container" class="flex justify-evenly">
             <div
               :id="key"
               class="w-1/5 flex flex-col items-center"
@@ -246,46 +258,6 @@ const onCharEnter = (event) => {
               <img :id="'song-' + key" :class="pick.class" :src="pick.src" />
               <v-icon class="verdict" :name="pick.icon" scale="5" />
             </div>
-            <!-- <div class="w-1/5 flex flex-col items-center">
-              <img
-                id="song-1"
-                class="grayscale opacity-50 rounded-4xl chosen-song song p-2"
-                src="/images/cropped-song-1.jpg"
-              />
-              <v-icon class="verdict" name="co-check-circle" scale="5" />
-            </div>
-            <div class="w-1/5 flex flex-col items-center">
-              <img
-                id="song-2"
-                class="grayscale opacity-50 rounded-4xl chosen-song song p-2"
-                src="/images/cropped-song-2.jpg"
-              />
-              <v-icon class="verdict" name="co-check-circle" scale="5" />
-            </div>
-            <div class="w-1/5 flex flex-col items-center">
-              <img
-                id="song-3"
-                class="grayscale opacity-50 rounded-4xl chosen-song song p-2"
-                src="/images/cropped-song-3.jpg"
-              />
-              <v-icon class="verdict" name="co-check-circle" scale="5" />
-            </div>
-            <div class="w-1/5 flex flex-col items-center">
-              <img
-                id="song-4"
-                class="grayscale opacity-50 rounded-4xl song p-2"
-                src="/images/cropped-song-5.jpg"
-              />
-              <v-icon class="verdict" name="bi-x-circle" scale="5" />
-            </div>
-            <div class="w-1/5 flex flex-col items-center">
-              <img
-                id="song-5"
-                class="grayscale opacity-50 rounded-4xl chosen-song song p-2"
-                src="/images/cropped-song-4.jpg"
-              />
-              <v-icon class="verdict" name="co-check-circle" scale="5" />
-            </div> -->
           </div>
         </div>
       </div>
@@ -295,42 +267,39 @@ const onCharEnter = (event) => {
       >
         <div class="flex items-center">
           <div class="w-1/2 mb-8">
-            <h1 class="text-6xl font-commissioner mb-4">Then we guess</h1>
+            <h1 class="text-6xl font-commissioner mb-4">Hear our verdict</h1>
             <p class="text-2xl">
               Get our recommendation based on what you told us. We can't
               guaranteee it will be perfect!
             </p>
           </div>
         </div>
-        <div class="relative w-full rounded-2xl">
-          <img
-            id="rec-song"
-            class="w-1/5 rounded-2xl"
-            src="/images/cropped-rec-song.jpg"
-          />
-          <div class="absolute inset-0">
+
+        <div id="rec-container" class="flex flex-grow">
+          <div class="relative w-1/4">
             <div
-              id="rec-text-left"
-              class="flex flex-col justify-center overflow-x-hidden h-full"
+              class="absolute inset-0"
+              v-for="(verdict, key) in verdicts"
+              :key="'img-' + key"
             >
-              <h1 class="text-5xl font-extrabold mb-4 text-nowrap">
-                LISA - MONEY
-              </h1>
-              <p class="text-2xl text-nowrap">
-                K-Pop, Hip-hop culture, Korean Dance
-              </p>
+              <img :src="verdict.src" class="rounded-4xl rec-song" />
             </div>
           </div>
-          <div id="rec-text-right" class="absolute right-0 bottom-0 top-0">
+
+          <div class="relative flex-grow">
             <div
-              class="flex flex-col justify-center items-end h-full overflow-x-hidden"
+              class="absolute inset-0 rec-text"
+              v-for="(verdict, key) in verdicts"
+              :key="'text-' + key"
             >
-              <h1 class="text-5xl text-nowrap font-extrabold mb-4">
-                This would have been our guess
-              </h1>
-              <p class="text-2xl text-nowrap">
-                If we took the examples from before
-              </p>
+              <div
+                class="flex flex-col justify-center h-full m-4 overflow-x-hidden"
+              >
+                <h1 class="text-6xl font-extrabold text-nowrap">
+                  {{ verdict.title }}
+                </h1>
+                <p class="text-2xl text-nowrap">{{ verdict.artist }}</p>
+              </div>
             </div>
           </div>
         </div>
