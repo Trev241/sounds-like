@@ -66,61 +66,65 @@ onBeforeUnmount(() => {
           className="flex-grow bg-black sm:ml-2 px-4 sm:px-6 pt-4 rounded overflow-auto"
         >
           <!-- Main Content (Changes Dynamically) -->
-      <div class="flex-grow overflow-hidden">
-        <div
-          class="flex-grow bg-black ml-2 px-6 pt-4 rounded overflow-auto hide-scrollbar"
-        >
-          <Navbar />
+          <div class="flex-grow overflow-hidden">
+            <div
+              class="flex-grow bg-black ml-2 px-6 pt-4 rounded overflow-auto hide-scrollbar"
+            >
+              <Navbar />
 
-          <!-- If showRecommendations is false, show Featured & Trending Songs -->
-          <div v-if="!showRecommendations">
-            <!-- Featured Charts -->
-            <div class="my-5 font-bold text-2xl">
-              <h1 class="my-5 text-bold text-2xl text-white">
-                Featured Charts
-              </h1>
-              <div class="w-full overflow-hidden">
-                <div
-                  class="flex gap-6 whitespace-nowrap"
-                  ref="albumContainerRef"
-                  :style="{ width: 'max-content' }"
-                >
-                  <AlbumItem
-                    v-for="(item, index) in [...albumsData, ...albumsData]"
-                    :key="index"
-                    :image="item.image"
-                    :name="item.name"
-                    :desc="item.desc"
-                    :id="item.id"
-                  />
+              <!-- If showRecommendations is false, show Featured & Trending Songs -->
+              <div v-if="!showRecommendations">
+                <!-- Featured Charts -->
+                <div class="my-5 font-bold text-2xl">
+                  <h1 class="my-5 text-bold text-2xl text-white">
+                    Featured Charts
+                  </h1>
+                  <div class="w-full overflow-hidden">
+                    <div
+                      class="flex gap-6 whitespace-nowrap"
+                      ref="albumContainerRef"
+                      :style="{ width: 'max-content' }"
+                    >
+                      <AlbumItem
+                        v-for="(item, index) in [...albumsData, ...albumsData]"
+                        :key="index"
+                        :image="item.image"
+                        :name="item.name"
+                        :desc="item.desc"
+                        :id="item.id"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Trending Songs -->
+                <div class="my-10 font-bold text-2xl">
+                  <h1 class="my-5 text-bold text-2xl text-white">
+                    Trending Songs
+                  </h1>
+                  <div class="w-full">
+                    <div
+                      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-8 w-full"
+                      ref="songContainerRef"
+                    >
+                      <SongItem
+                        v-for="(song, index) in songsData"
+                        :key="index"
+                        :image="song.image"
+                        :name="song.name"
+                        :desc="song.desc"
+                        :id="song.id"
+                        class="song-item"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Trending Songs -->
-            <div class="my-10 font-bold text-2xl">
-              <h1 class="my-5 text-bold text-2xl text-white">Trending Songs</h1>
-              <div class="w-full">
-                <div
-                  class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-6 gap-y-8 w-full"
-                  ref="songContainerRef"
-                >
-                  <SongItem
-                    v-for="(song, index) in songsData"
-                    :key="index"
-                    :image="song.image"
-                    :name="song.name"
-                    :desc="song.desc"
-                    :id="song.id"
-                    class="song-item"
-                  />
-                </div>
-              </div>
+              <!-- If showRecommendations is true, show Recommendation Page -->
+              <Recommendation v-if="showRecommendations" />
             </div>
           </div>
-
-          <!-- If showRecommendations is true, show Recommendation Page -->
-          <Recommendation v-if="showRecommendations" />
         </div>
       </div>
     </div>
