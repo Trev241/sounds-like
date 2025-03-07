@@ -345,7 +345,12 @@ const onCharEnter = (event) => {
           What are you waiting for?
         </h1>
         <h1 class="text-5xl md:text-7xl">
-          Get started <a class="underline">here</a>
+          Get started
+          <router-link
+            to="/qualify"
+            class="underline cursor-pointer hover:text-pink-600"
+            >here</router-link
+          >
         </h1>
       </div>
     </div>
