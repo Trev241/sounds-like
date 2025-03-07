@@ -180,4 +180,5 @@ data/
 
 
 viewer/node_modules/
-
+audio
+dump.json

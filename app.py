@@ -3,14 +3,15 @@ import torch
 import sqlite3
 import string
 import random
-
+import json
 
 from learn.models import RecommendationModel
 from fastapi import Request, FastAPI, HTTPException
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from urllib.parse import urlencode
 from dotenv import load_dotenv
+from audio_downloader import AudioDownloader
 
 # Load environment variables
 load_dotenv()
@@ -35,6 +36,9 @@ model.load_state_dict(torch.load("data/recommender.pt", weights_only=False))
 # Opening a database connection
 conn = sqlite3.connect("data/track_metadata.db")
 cursor = conn.cursor()
+
+# Setting up YT-DLP
+audioDownloader = AudioDownloader()
 
 
 # Getting authorization
@@ -106,14 +110,39 @@ def get_song_code(id):
         raise HTTPException(status_code=400, detail=f"No song with ID - {id}")
 
 
-@app.get("/preview")
-def get_preview(title: str):
-    pass
+def stream_audio(file, chunk_size=8192):
+    with open(file, "rb") as f:
+        while chunk := f.read(chunk_size):
+            yield chunk
 
 
-@app.get("/song/{id}")
-async def get_song(id):
-    return get_song_metadata(id)
+@app.get("/thumbnail/{id}")
+async def get_thumbnail(id):
+    try:
+        with open(f"audio/metadata/{id}.json") as f:
+            details = json.load(f)
+        return details["thumbnail"]
+    except:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No thumbnail for {id} exists. Perhaps make a call to /stream first",
+        )
+
+
+@app.get("/stream/{id}")
+async def get_stream(id):
+    metadata = get_song_metadata(id)
+    details = audioDownloader.download(metadata["title"], metadata["artist_name"])
+    for k, v in details.items():
+        metadata[k] = v
+
+    _, ext = metadata["filename"].split(".")
+
+    # Stream the audio instead
+    return StreamingResponse(
+        stream_audio(metadata["filepath"]),
+        media_type=f"audio/{ext}",
+    )
 
 
 @app.post("/predict")
