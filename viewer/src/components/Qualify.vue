@@ -10,7 +10,8 @@ import AlbumItem from "./AlbumItem.vue";
 import SongItem from "./SongItem.vue";
 import Recommendation from "./Recommendation.vue";
 import { albumsData, songsData } from "../assets/assets.js";
-import { fetchSongs } from "./api.js";
+import { fetchSongs, fetchTrack } from "./api.js";
+import { useAuthStore } from "../stores/auth.js";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -30,8 +31,18 @@ const loadSongs = async () => {
   }));
 };
 
+const authStore = useAuthStore();
+if (!authStore.token) window.location.href = "http://localhost:8000/authorize";
+
+const test = async () => {
+  console.log("fetching");
+  const details = await fetchTrack(authStore.token, "Never Gonna Give You Up");
+  console.log(details);
+};
+
 onMounted(() => {
-  loadSongs();
+  // loadSongs();
+  test();
 
   if (albumContainerRef.value) {
     gsap.to(albumContainerRef.value, {

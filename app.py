@@ -4,6 +4,7 @@ import sqlite3
 import string
 import random
 
+
 from learn.models import RecommendationModel
 from fastapi import Request, FastAPI, HTTPException
 from fastapi.responses import RedirectResponse
@@ -19,10 +20,9 @@ print(os.getenv("REDIRECT_URI"))
 app = FastAPI()
 
 # Setting up CORS middleware
-origins = ["http://localhost:5173"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

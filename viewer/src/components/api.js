@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const API_BASE_URL = "http://127.0.0.1:8000";
+const SPOTIFY_BASE_URL = "https://api.spotify.com/v1";
 
 export const fetchSongs = async () => {
   try {
@@ -9,6 +10,32 @@ export const fetchSongs = async () => {
   } catch (error) {
     console.error("Error fetching songs:", error);
     return [];
+  }
+};
+
+export const fetchTrack = async (token, title) => {
+  try {
+    let response = await axios.get(`${SPOTIFY_BASE_URL}/search`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        q: title,
+        type: "track",
+        limit: 1,
+      },
+    });
+    console.log(response.data);
+    const trackUrl = response.data.tracks.items[0].href;
+    console.log(trackUrl);
+    response = await axios.get(trackUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
   }
 };
 
