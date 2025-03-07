@@ -7,6 +7,7 @@ import random
 from learn.models import RecommendationModel
 from fastapi import Request, FastAPI, HTTPException
 from fastapi.responses import RedirectResponse
+from fastapi.middleware.cors import CORSMiddleware
 from urllib.parse import urlencode
 from dotenv import load_dotenv
 
@@ -14,7 +15,18 @@ from dotenv import load_dotenv
 load_dotenv()
 print(os.getenv("REDIRECT_URI"))
 
+# Initialize app
 app = FastAPI()
+
+# Setting up CORS middleware
+origins = ["http://localhost:5173"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Loading the model
 model = RecommendationModel(74581, 3)
