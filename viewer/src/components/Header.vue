@@ -51,17 +51,5 @@ onMounted(() => {
         />
       </div>
     </div>
-
-    <!-- Right Section: About, Download, Login -->
-    <div className="hidden sm:flex items-center gap-5 w-2/5 justify-end text-lg">
-      <p className="cursor-pointer hover:opacity-80 font-medium">About</p>
-      <p className="cursor-pointer hover:opacity-80 font-medium">Download</p>
-      <span className="text-gray-500 text-xl">|</span>
-      <button
-        className="px-6 py-2 rounded-full bg-white text-black font-medium hover:bg-gray-200 text-lg"
-      >
-        Login
-      </button>
-    </div>
   </div>
 </template>

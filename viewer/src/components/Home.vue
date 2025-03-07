@@ -38,7 +38,7 @@ const verdicts = ref([
 
 onMounted(() => {
   gsap.to(".title-char", {
-    y: -40,
+    y: -20,
     duration: 0.2,
     ease: "circ.out",
     color: "rgb(60, 60, 200)",
@@ -59,14 +59,12 @@ onMounted(() => {
     {
       filter: "grayscale(100%) blur(2px)",
       opacity: 0,
-      // y: 100,
-      x: "500%",
+      x: "100%",
     },
     {
       opacity: 1,
       stagger: 0.1,
       x: 0,
-      // y: 0,
       ease: "power4.out",
     }
   );
@@ -85,7 +83,7 @@ onMounted(() => {
   );
   songTimeline.add(() => {}, "+=5");
   songTimeline.to(".verdict", { opacity: 0 });
-  songTimeline.to(".song", { x: "-500%", stagger: 0.1 }, "+=2");
+  songTimeline.to(".song", { x: "-100%", stagger: 0.1 }, "+=2");
   songTimeline.add(() => {}, "+=2");
 
   let recTimeline = gsap.timeline({
@@ -113,8 +111,7 @@ const onCharEnter = (event) => {
 
   if (!(id in titleAnims))
     titleAnims[id] = gsap.to(`#${id}`, {
-      // scale: 1.5,
-      y: -40,
+      y: -20,
       duration: 0.4,
       ease: "power4.out",
       color: `rgb(${idInt * colorStep}, ${255 - idInt * colorStep}, 200)`,
@@ -143,48 +140,16 @@ const onCharEnter = (event) => {
     <div
       id="background-img"
       class="absolute inset-0 bg-cover bg-center bg-fixed"
+      style="background-image: url('/images/bg-2.jpg'); filter: brightness(25%);"
     ></div>
 
     <div class="relative z-10 text-white">
-      <!-- <div id="card-container" class="absolute inset-0">
-        <div
-          class="flex justify-evenly items-center bg-gray-900 h-screen font-extrabold"
-        >
-          <div
-            id="card-1"
-            class="w-full card flex items-center justify-center text-8xl h-full overflow-x-hidden"
-          >
-            Pop
-          </div>
-          <div
-            id="card-2"
-            class="w-full card flex items-center justify-center text-8xl h-full overflow-x-hidden"
-          >
-            Rock
-          </div>
-          <div
-            id="card-3"
-            class="w-full card flex items-center justify-center text-8xl h-full overflow-x-hidden"
-          >
-            EDM
-          </div>
-          <div
-            id="card-4"
-            class="w-full card flex items-center justify-center bg-gray-900 text-8xl h-full overflow-x-hidden"
-          >
-            Anything!
-          </div>
-        </div>
-      </div> -->
-
-      <div
-        class="flex flex-col items-center justify-center text-center h-screen"
-      >
-        <h1 class="flex text-4xl font-extrabold tracking-[.3rem] mb-4">
+      <div class="flex flex-col items-center justify-center text-center h-screen">
+        <h1 class="flex flex-wrap justify-center text-4xl sm:text-6xl md:text-8xl font-extrabold tracking-[.3rem] mb-4">
           <div
             :id="'char-' + key"
             @mouseenter="onCharEnter"
-            class="text-8xl title-char"
+            class="text-4xl sm:text-6xl md:text-8xl title-char"
             v-for="(char, key) in title"
             :key="key"
           >
@@ -192,101 +157,51 @@ const onCharEnter = (event) => {
             <template v-else>{{ char }}</template>
           </div>
         </h1>
-        <p class="md:text-4xl">for whatever mood you're in</p>
+        <p class="text-xl sm:text-2xl md:text-4xl">for whatever mood you're in</p>
       </div>
 
-      <!-- <div class="flex items-center h-screen overflow-x-hidden">
-        <div
-          id="about"
-          class="font-tenor-sans flex-grow bg-white text-black p-8"
-        >
-          <div class="">
-            <h1 class="text-4xl font-extrabold mb-6 text-center">
-              So what's all this?
-            </h1>
-            <p class="text-xl mb-4">
-              sounds-like is the manifestation of a humble effort to learn how
-              machine learning works. Whether your taste in music is mainstream
-              or not, it is pretty pervasive in everyone's life. It's obviously
-              already been done before, perhaps even better, but why not try to
-              predict what song someone might want to listen to?
-            </p>
-            <p class="text-xl mb-4">
-              We are pretty good at telling friends the bangers apart from the
-              trash but how do you make a machine do it? Imagine what a disaster
-              it would be to be given <i>Thick of It</i> as a recommendation.
-            </p>
-            <p class="text-xl mb-4">
-              Back to us, our model is designed on a simple neural network that
-              has trained itself on the taste profile encompassing over 30k
-              songs and 10k users. We would have loved to have trained on a much
-              larger dataset but it's difficult when you're just a broke
-              student.
-            </p>
-            <p class="text-xl">
-              As for how this works, all you have to do is pick your top 4 from
-              our dataset of songs. (No, we don't have that song that was
-              released a month ago.) Our model will try to predict the
-              probability chance of you interacting with each song in the
-              dataset based on what you tell us. From this, we can deduce that
-              items with the highest probability are songs that you are very
-              likely to listen to. These are the songs we will recommend. It
-              ain't much but it's honest work.
-            </p>
-          </div>
+      <div class="flex flex-col min-h-screen max-w-screen-xl mx-auto py-12 sm:py-24 overflow-x-hidden">
+        <div class="w-full px-4 sm:px-0">
+          <h1 class="text-4xl sm:text-6xl font-commissioner mb-4">Pick your top 4</h1>
+          <p class="text-lg sm:text-2xl mb-8">
+            Let us know what you like best so that we can tell you the next best thing to listen to. Why just 4? No idea.
+          </p>
         </div>
-      </div> -->
-
-      <div
-        class="flex flex-col min-h-screen max-w-screen-xl mx-auto py-24 overflow-x-hidden"
-      >
-        <div class="">
-          <div class="w-1/2">
-            <h1 class="text-6xl font-commissioner mb-4">Pick your top 4</h1>
-            <p class="text-2xl mb-8">
-              Let us know what you like best so that we can tell you the next
-              best thing to listen to. Why just 4? No idea.
-            </p>
-          </div>
-          <div id="pick-container" class="flex justify-evenly">
-            <div
-              :id="key"
-              class="w-1/5 flex flex-col items-center"
-              v-for="(pick, key) in picks"
-              :key="key"
-            >
-              <img :id="'song-' + key" :class="pick.class" :src="pick.src" />
-              <v-icon class="verdict" :name="pick.icon" scale="5" />
-            </div>
+        <div id="pick-container" class="flex flex-col sm:flex-row justify-evenly gap-4 sm:gap-0">
+          <div
+            :id="key"
+            class="w-full sm:w-1/5 flex flex-col items-center"
+            v-for="(pick, key) in picks"
+            :key="key"
+          >
+            <img :id="'song-' + key" :class="pick.class" :src="pick.src" class="w-full sm:w-auto" />
+            <v-icon class="verdict" :name="pick.icon" scale="2 sm:scale-3 md:scale-4 lg:scale-5" />
           </div>
         </div>
       </div>
 
-      <div
-        class="flex flex-col h-screen justify-center max-w-screen-xl mx-auto py-24"
-      >
-        <div class="flex items-center">
-          <div class="w-1/2 mb-8">
-            <h1 class="text-6xl font-commissioner mb-4">Hear our verdict</h1>
-            <p class="text-2xl">
-              Get our recommendation based on what you told us. We can't
-              guaranteee it will be perfect!
+      <div class="flex flex-col h-screen justify-center max-w-screen-xl mx-auto py-12 sm:py-24">
+        <div class="flex flex-col sm:flex-row items-center px-4 sm:px-0">
+          <div class="w-full sm:w-1/2 mb-8">
+            <h1 class="text-4xl sm:text-6xl font-commissioner mb-4">Hear our verdict</h1>
+            <p class="text-lg sm:text-2xl">
+              Get our recommendation based on what you told us. We can't guarantee it will be perfect!
             </p>
           </div>
         </div>
 
-        <div id="rec-container" class="flex flex-grow">
-          <div class="relative w-1/4">
+        <div id="rec-container" class="flex flex-col sm:flex-row flex-grow px-4 sm:px-0">
+          <div class="relative w-full sm:w-1/4 mb-8 sm:mb-0">
             <div
               class="absolute inset-0"
               v-for="(verdict, key) in verdicts"
               :key="'img-' + key"
             >
-              <img :src="verdict.src" class="rounded-4xl rec-song" />
+              <img :src="verdict.src" class="rounded-4xl rec-song w-full sm:w-auto" />
             </div>
           </div>
 
-          <div class="relative flex-grow">
+          <div class="relative w-full sm:flex-grow">
             <div
               class="absolute inset-0 rec-text"
               v-for="(verdict, key) in verdicts"
@@ -295,10 +210,10 @@ const onCharEnter = (event) => {
               <div
                 class="flex flex-col justify-center h-full m-4 overflow-x-hidden"
               >
-                <h1 class="text-6xl font-extrabold text-nowrap">
+                <h1 class="text-4xl sm:text-6xl font-extrabold text-nowrap">
                   {{ verdict.title }}
                 </h1>
-                <p class="text-2xl text-nowrap">{{ verdict.artist }}</p>
+                <p class="text-lg sm:text-2xl text-nowrap">{{ verdict.artist }}</p>
               </div>
             </div>
           </div>
@@ -311,11 +226,5 @@ const onCharEnter = (event) => {
 <style>
 .title-char {
   cursor: default;
-}
-
-#background-img {
-  background-image: url("/images/bg-2.jpg");
-  background-attachment: fixed;
-  filter: brightness(25%);
 }
 </style>
