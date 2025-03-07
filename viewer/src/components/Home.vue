@@ -2,7 +2,6 @@
 import { onMounted, ref } from "vue";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/all";
-import.meta.glob("/public/sounds/*.ogg");
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -49,49 +48,50 @@ onMounted(() => {
     },
   });
 
-  let songTimeline = gsap.timeline({
-    repeat: -1,
-    paused: true,
-    scrollTrigger: { trigger: "#pick-container", markers: true },
-  });
-  songTimeline.fromTo(
-    ".song",
-    {
-      filter: "grayscale(100%) blur(2px)",
-      opacity: 0,
-      // y: 100,
-      x: "500%",
-    },
-    {
-      opacity: 1,
-      stagger: 0.1,
-      x: 0,
-      // y: 0,
-      ease: "power4.out",
-    }
-  );
-  songTimeline.to(".chosen-song", {
-    filter: "grayscale(0) blur(0)",
-    stagger: 0.25,
-  });
-  songTimeline.fromTo(
-    ".verdict",
-    {
-      opacity: 0,
-      y: 25,
-    },
-    { opacity: 1, stagger: 0.1, y: 0 },
-    "+=1"
-  );
-  songTimeline.add(() => {}, "+=5");
-  songTimeline.to(".verdict", { opacity: 0 });
-  songTimeline.to(".song", { x: "-500%", stagger: 0.1 }, "+=2");
-  songTimeline.add(() => {}, "+=2");
+  gsap
+    .timeline({
+      repeat: -1,
+      paused: true,
+      scrollTrigger: { trigger: "#pick-container", markers: true },
+    })
+    .fromTo(
+      ".song",
+      {
+        filter: "grayscale(100%) blur(2px)",
+        opacity: 0,
+        x: "500%",
+      },
+      {
+        opacity: 1,
+        stagger: 0.1,
+        x: 0,
+        ease: "power4.out",
+      }
+    )
+    .to(".chosen-song", {
+      filter: "grayscale(0) blur(0)",
+      stagger: 0.25,
+    })
+    .fromTo(
+      ".verdict",
+      {
+        opacity: 0,
+        y: 25,
+      },
+      { opacity: 1, stagger: 0.1, y: 0 },
+      "+=1"
+    )
+    .add(() => {}, "+=5")
+    .to(".verdict", { opacity: 0 })
+    .to(".song", { x: "-500%", stagger: 0.1 }, "+=2")
+    .add(() => {}, "+=2");
 
   gsap
     .timeline({
       repeat: -1,
-      ease: "power4.out",
+      defaults: {
+        ease: "power1.out",
+      },
       scrollTrigger: {
         trigger: "#rec-container",
         start: "top bottom",
@@ -99,18 +99,26 @@ onMounted(() => {
       },
     })
     .set(".rec-text", { width: 0 })
-    .set(".rec-song", { scaleX: 0 })
-    .to(".rec-song", { scaleX: 1, duration: 0.25 })
+    .fromTo(
+      ".rec-song",
+      { opacity: 0, y: -25 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.25,
+        stagger: { amount: 5, repeat: 1, yoyo: true, repeatDelay: 3.25 },
+      }
+    )
     .to(
       ".rec-text",
       {
         width: "100%",
-        duration: 1,
-        stagger: { amount: 6, repeat: 1, yoyo: true },
+        duration: 1.75,
+        stagger: { amount: 5, repeat: 1, yoyo: true },
       },
-      "-=100%"
-    );
-  // .add(() => {}, "+=1");
+      "<"
+    )
+    .add(() => {}, "+=1");
 });
 
 const onCharEnter = (event) => {
@@ -201,7 +209,7 @@ const onCharEnter = (event) => {
             </div>
           </h1>
         </div>
-        <h1 class="md:hidden text-4xl mb-4 font-extrabold">
+        <h1 class="md:hidden text-6xl mb-4 font-extrabold">
           Find that perfect song
         </h1>
         <p class="text-xl md:text-4xl md:contents">
@@ -303,7 +311,11 @@ const onCharEnter = (event) => {
               v-for="(verdict, key) in verdicts"
               :key="'img-' + key"
             >
-              <img :src="verdict.src" class="rounded-4xl rec-song" />
+              <img
+                :id="'rec-song-' + key"
+                :src="verdict.src"
+                class="rounded-4xl rec-song"
+              />
             </div>
           </div>
 
@@ -324,6 +336,17 @@ const onCharEnter = (event) => {
             </div>
           </div>
         </div>
+      </div>
+
+      <div
+        class="flex flex-col h-screen justify-center max-w-screen-xl mx-auto md:py-24 md:px-0 p-6"
+      >
+        <h1 class="text-5xl md:text-7xl font-extrabold mb-4">
+          What are you waiting for?
+        </h1>
+        <h1 class="text-5xl md:text-7xl">
+          Get started <a class="underline">here</a>
+        </h1>
       </div>
     </div>
   </div>
