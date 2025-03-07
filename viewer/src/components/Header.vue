@@ -42,7 +42,7 @@ onMounted(() => {
       >
         Sound Like
       </p>
-      <div
+      <!-- <div
         className="flex items-center h-10 sm:h-12 w-full sm:w-[420px] px-3 sm:px-5 rounded-full border border-gray-600 bg-[#1e1e1e] focus-within:border-2 focus-within:border-white"
       >
         <v-icon name="io-search" class="h-5 w-5 sm:h-6 sm:w-6" />
@@ -51,7 +51,7 @@ onMounted(() => {
           :placeholder="placeholderRef"
           className="bg-transparent outline-none text-white w-full placeholder-gray-400 px-2 text-sm sm:text-lg"
         />
-      </div>
+      </div> -->
     </div>
 
     <!-- Right Section: About, Download, Login -->

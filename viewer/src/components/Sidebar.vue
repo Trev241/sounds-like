@@ -52,7 +52,7 @@ const goToRecommendations = () => {
       </div>
     </div>
 
-    <div
+    <!-- <div
       ref="playlist"
       class="p-4 bg-[#242424] m-2 rounded font-semibold flex flex-col items-start justify-start gap-1 pl-4"
     >
@@ -65,7 +65,7 @@ const goToRecommendations = () => {
       >
         Create Playlist
       </button>
-    </div>
+    </div> -->
 
     <div
       ref="recommend"
