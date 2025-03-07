@@ -6,6 +6,18 @@ const controlsRef = ref(null);
 const progressRef = ref(null);
 const leftSectRef = ref(null);
 
+// Play/Pause State
+const isPlaying = ref(false);
+
+// Volume State
+const volume = ref(50); // Default volume set to 50%
+
+// Toggle Play/Pause
+const togglePlay = () => {
+  isPlaying.value = !isPlaying.value;
+};
+
+// GSAP Animations
 onMounted(() => {
   const tl = gsap.timeline();
 
@@ -37,42 +49,58 @@ onMounted(() => {
 
 <template>
   <div
-    className="w-full fixed bottom-0 left-0 h-[12%] backdrop-blur-lg flex items-center justify-between text-white px-6"
+    class="w-full fixed bottom-0 left-0 h-[10%] bg-[#181818] flex items-center justify-between text-white px-8 py-4 shadow-lg"
   >
     <!-- Left Section - Song Info -->
-    <div ref="leftSectRef" className="hidden lg:flex items-center gap-3">
-      <!-- <img
-        src="{songsData[0].image}"
-        className="w-12 rounded-md shadow-lg"
-        alt="Song"
-      /> -->
+    <div ref="leftSectRef" class="hidden lg:flex items-center gap-4">
       <div>
-        <p className="text-sm font-semibold">{songsData[0].name}</p>
-        <p className="text-xs text-gray-400">
-          {songsData[0].desc.slice(0, 12)}
-        </p>
+        <p class="text-lg font-semibold">Song Name</p>
+        <p class="text-sm text-gray-400">Artist Name</p>
       </div>
     </div>
 
     <!-- Center Section - Controls -->
-    <div
-      ref="controlsRef"
-      className="flex flex-col items-center gap-2 flex-grow"
-    >
-      <!-- Progress Bar  -->
-      <div className="flex items-center gap-3 w-full max-w-[500px]">
-        <p className="text-xs text-gray-400">1:06</p>
+    <div ref="controlsRef" class="flex flex-col items-center gap-3 flex-grow">
+      <!-- Play/Pause Button -->
+      <button
+        @click="togglePlay"
+        class="text-4xl text-white hover:scale-110 transition-transform duration-200"
+      >
+        <v-icon v-if="isPlaying" name="fa-pause" scale="2" />
+        <v-icon v-else name="fa-play" scale="2" />
+      </button>
+
+      <!-- Progress Bar -->
+      <div class="flex items-center gap-4 w-full max-w-[550px]">
+        <p class="text-sm text-gray-400">1:06</p>
         <div
           ref="progressRef"
-          className="relative w-full h-1 bg-gray-600 rounded-full cursor-pointer"
+          class="relative w-full h-2 bg-gray-700 rounded-full cursor-pointer"
         >
           <div
-            className="absolute h-1 bg-green-500 rounded-full"
-            style="width: 0"
+            class="absolute h-2 bg-green-500 rounded-full"
+            style="width: 30%"
           ></div>
         </div>
-        <p className="text-xs text-gray-400">3:30</p>
+        <p class="text-sm text-gray-400">3:30</p>
       </div>
+    </div>
+
+    <!-- Right Section - Volume Control -->
+    <div class="flex items-center gap-4">
+      <v-icon
+        name="bi-volume-down-fill"
+        class="text-2xl text-white"
+        scale="3"
+      />
+      <input
+        type="range"
+        min="0"
+        max="100"
+        v-model="volume"
+        class="w-32 h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-green-500"
+      />
+      <p class="text-sm text-gray-400">{{ volume }}%</p>
     </div>
   </div>
 </template>
