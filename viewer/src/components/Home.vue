@@ -154,6 +154,10 @@ const onCharEnter = (event) => {
 </script>
 
 <template>
+  <audio controls>
+    <source src="http://127.0.0.1:8000/stream/SOBQJJX12A6D4F7F01" />
+  </audio>
+
   <div class="relative min-h-screen">
     <div
       id="background-img"

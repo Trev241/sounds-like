@@ -13,7 +13,7 @@ class AudioDownloader:
             }
         )
 
-    def download(self, q, artist):
+    def download(self, song_id, q, artist):
         info = self.yt.extract_info(f"ytsearch1:{q} by {artist}", download=True)
 
         with open("dump.json", "w") as f:
@@ -40,7 +40,7 @@ class AudioDownloader:
             "thumbnail": thumbnail,
         }
 
-        with open(f"audio/metadata/{q}.json", "w") as f:
-            json.dumps(details, f, indent=2)
+        with open(f"audio/metadata/{song_id}.json", "w") as f:
+            json.dump(details, f, indent=2)
 
         return details

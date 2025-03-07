@@ -121,7 +121,7 @@ async def get_thumbnail(id):
     try:
         with open(f"audio/metadata/{id}.json") as f:
             details = json.load(f)
-        return details["thumbnail"]
+        return {"thumbnail": details["thumbnail"]}
     except:
         raise HTTPException(
             status_code=404,
@@ -132,7 +132,7 @@ async def get_thumbnail(id):
 @app.get("/stream/{id}")
 async def get_stream(id):
     metadata = get_song_metadata(id)
-    details = audioDownloader.download(metadata["title"], metadata["artist_name"])
+    details = audioDownloader.download(id, metadata["title"], metadata["artist_name"])
     for k, v in details.items():
         metadata[k] = v
 
