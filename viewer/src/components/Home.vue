@@ -88,22 +88,29 @@ onMounted(() => {
   songTimeline.to(".song", { x: "-500%", stagger: 0.1 }, "+=2");
   songTimeline.add(() => {}, "+=2");
 
-  let recTimeline = gsap.timeline({
-    repeat: -1,
-    ease: "power4.out",
-    scrollTrigger: {
-      trigger: "#rec-container",
-      start: "top bottom",
-      markers: true,
-    },
-  });
-  recTimeline.set(".rec-text", { width: 0 });
-  recTimeline.to(".rec-text", {
-    width: "100%",
-    duration: 2,
-    stagger: { amount: 6, repeat: 1, yoyo: true },
-  });
-  recTimeline.add(() => {}, "+=3");
+  gsap
+    .timeline({
+      repeat: -1,
+      ease: "power4.out",
+      scrollTrigger: {
+        trigger: "#rec-container",
+        start: "top bottom",
+        markers: true,
+      },
+    })
+    .set(".rec-text", { width: 0 })
+    .set(".rec-song", { scaleX: 0 })
+    .to(".rec-song", { scaleX: 1, duration: 0.25 })
+    .to(
+      ".rec-text",
+      {
+        width: "100%",
+        duration: 1,
+        stagger: { amount: 6, repeat: 1, yoyo: true },
+      },
+      "-=100%"
+    );
+  // .add(() => {}, "+=1");
 });
 
 const onCharEnter = (event) => {

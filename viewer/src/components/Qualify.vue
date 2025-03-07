@@ -32,7 +32,7 @@ onMounted(() => {
         <div
           className="flex-grow bg-black sm:ml-2 px-4 sm:px-6 pt-4 rounded overflow-auto"
         >
-               <!-- <div className="flex-grow overflow-hidden">
+          <!-- <div className="flex-grow overflow-hidden">
         <div
           className="flex-grow  bg-black ml-2 px-6 pt-4 rounded overflow-auto"
         >
