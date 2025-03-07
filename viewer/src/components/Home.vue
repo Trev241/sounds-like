@@ -185,21 +185,28 @@ const onCharEnter = (event) => {
       </div> -->
 
       <div
-        class="flex flex-col items-center justify-center text-center h-screen"
+        class="flex flex-col md:items-center md:text-center md:p-0 p-6 justify-center h-screen"
       >
-        <h1 class="flex text-4xl font-extrabold tracking-[.3rem] mb-4">
-          <div
-            :id="'char-' + key"
-            @mouseenter="onCharEnter"
-            class="text-8xl title-char"
-            v-for="(char, key) in title"
-            :key="key"
-          >
-            <template v-if="char === ' '">&nbsp;</template>
-            <template v-else>{{ char }}</template>
-          </div>
+        <div class="hidden md:contents">
+          <h1 class="flex font-extrabold tracking-[.3rem] mb-4">
+            <div
+              :id="'char-' + key"
+              @mouseenter="onCharEnter"
+              class="text-8xl title-char"
+              v-for="(char, key) in title"
+              :key="key"
+            >
+              <template v-if="char === ' '">&nbsp;</template>
+              <template v-else>{{ char }}</template>
+            </div>
+          </h1>
+        </div>
+        <h1 class="md:hidden text-4xl mb-4 font-extrabold">
+          Find that perfect song
         </h1>
-        <p class="md:text-4xl">for whatever mood you're in</p>
+        <p class="text-xl md:text-4xl md:contents">
+          for whatever mood you're in
+        </p>
       </div>
 
       <!-- <div class="flex items-center h-screen overflow-x-hidden">
@@ -245,20 +252,25 @@ const onCharEnter = (event) => {
       </div> -->
 
       <div
-        class="flex flex-col min-h-screen max-w-screen-xl mx-auto py-24 overflow-x-hidden"
+        class="flex flex-col min-h-screen max-w-screen-xl mx-auto md:py-24 md:p-0 p-6 overflow-x-hidden"
       >
-        <div class="">
-          <div class="w-1/2">
-            <h1 class="text-6xl font-commissioner mb-4">Pick your top 4</h1>
-            <p class="text-2xl mb-8">
+        <div class="flex flex-col">
+          <div class="md:w-1/2">
+            <h1 class="text-5xl md:text-6xl font-commissioner mb-4">
+              Pick your top 4
+            </h1>
+            <p class="text-xl md:text-2xl mb-8">
               Let us know what you like best so that we can tell you the next
               best thing to listen to. Why just 4? No idea.
             </p>
           </div>
-          <div id="pick-container" class="flex justify-evenly">
+          <div
+            id="pick-container"
+            class="flex flex-wrap md:flex-nowrap justify-evenly"
+          >
             <div
               :id="key"
-              class="w-1/5 flex flex-col items-center"
+              class="w-1/2 md:w-1/5 flex flex-col items-center"
               v-for="(pick, key) in picks"
               :key="key"
             >
@@ -270,12 +282,14 @@ const onCharEnter = (event) => {
       </div>
 
       <div
-        class="flex flex-col h-screen justify-center max-w-screen-xl mx-auto py-24"
+        class="flex flex-col h-screen justify-center max-w-screen-xl mx-auto md:py-24 md:px-0 p-6"
       >
         <div class="flex items-center">
-          <div class="w-1/2 mb-8">
-            <h1 class="text-6xl font-commissioner mb-4">Hear our verdict</h1>
-            <p class="text-2xl">
+          <div class="md:w-1/2 mb-8">
+            <h1 class="text-5xl md:text-6xl font-commissioner mb-4">
+              Hear our verdict
+            </h1>
+            <p class="text-xl text-2xl">
               Get our recommendation based on what you told us. We can't
               guaranteee it will be perfect!
             </p>
@@ -283,7 +297,7 @@ const onCharEnter = (event) => {
         </div>
 
         <div id="rec-container" class="flex flex-grow">
-          <div class="relative w-1/4">
+          <div class="relative w-full md:w-1/4">
             <div
               class="absolute inset-0"
               v-for="(verdict, key) in verdicts"
@@ -300,7 +314,7 @@ const onCharEnter = (event) => {
               :key="'text-' + key"
             >
               <div
-                class="flex flex-col justify-center h-full m-4 overflow-x-hidden"
+                class="flex flex-col justify-center h-full mx-4 overflow-x-hidden"
               >
                 <h1 class="text-6xl font-extrabold text-nowrap">
                   {{ verdict.title }}
