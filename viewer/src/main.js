@@ -16,6 +16,12 @@ import {
   MdLoop,
   IoSearch,
   CoHome,
+  BiSoundwave,
+  FaPlay,
+  FaPause,
+  BiVolumeDownFill,
+  BiBookmarkPlus,
+  FcLike,
 } from "oh-vue-icons/icons";
 
 addIcons(
@@ -30,7 +36,13 @@ addIcons(
   FcNext,
   MdLoop,
   IoSearch,
-  CoHome
+  CoHome,
+  BiSoundwave,
+  FaPlay,
+  FaPause,
+  BiVolumeDownFill,
+  BiBookmarkPlus,
+  FcLike
 );
 
 const app = createApp(App);

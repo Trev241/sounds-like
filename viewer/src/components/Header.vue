@@ -1,23 +1,25 @@
 <script setup>
 import gsap from "gsap";
-import { onMounted, ref, useTemplateRef } from "vue";
+import { onMounted, ref } from "vue";
 
-let placeholderText = "";
-const placeholderRef = ref(placeholderText);
+const placeholderText = ref("");
 const header = ref(null);
 
 onMounted(() => {
+  // Animate header on mount
   gsap.fromTo(
     header.value,
     { y: -50, opacity: 0 },
     { y: 0, opacity: 1, duration: 1, ease: "power3.out" }
   );
 
+  // Typing animation effect for the search bar placeholder
   const text = "What do you want to play?";
   let index = 0;
+
   const typePlaceholder = () => {
     if (index <= text.length) {
-      placeholderText = text.substring(0, index);
+      placeholderText.value = text.substring(0, index);
       index++;
       setTimeout(typePlaceholder, 100);
     }
@@ -53,12 +55,14 @@ onMounted(() => {
     </div>
 
     <!-- Right Section: About, Download, Login -->
-    <div className="hidden sm:flex items-center gap-5 w-2/5 justify-end text-lg">
+    <div
+      className="hidden sm:flex items-center gap-5 w-2/5 justify-end text-lg"
+    >
       <p className="cursor-pointer hover:opacity-80 font-medium">About</p>
       <p className="cursor-pointer hover:opacity-80 font-medium">Download</p>
       <span className="text-gray-500 text-xl">|</span>
       <button
-        className="px-6 py-2 rounded-full bg-white text-black font-medium hover:bg-gray-200 text-lg"
+        class="px-6 py-2 rounded-full bg-white text-black font-medium hover:bg-gray-200 text-lg"
       >
         Login
       </button>
