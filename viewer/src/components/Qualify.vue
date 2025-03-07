@@ -18,17 +18,21 @@ onMounted(() => {
   // });
 });
 </script>
-
 <template>
   <div className="h-screen bg-black flex flex-col">
     <vheader></vheader>
 
     <div className="flex flex-grow pt-[65px]">
-      <div className="w-[320px] flex-shrink-0">
+      <div className="w-full sm:w-[320px] flex-shrink-0">
         <sidebar></sidebar>
       </div>
 
-      <!-- <div className="flex-grow overflow-hidden">
+      <!-- Main Content Area -->
+      <div className="flex-grow overflow-hidden">
+        <div
+          className="flex-grow bg-black sm:ml-2 px-4 sm:px-6 pt-4 rounded overflow-auto"
+        >
+               <!-- <div className="flex-grow overflow-hidden">
         <div
           className="flex-grow  bg-black ml-2 px-6 pt-4 rounded overflow-auto"
         >
@@ -58,6 +62,8 @@ onMounted(() => {
           </div>
         </div>
       </div> -->
+        </div>
+      </div>
     </div>
 
     <player></player>
